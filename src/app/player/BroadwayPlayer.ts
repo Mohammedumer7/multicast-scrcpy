@@ -52,6 +52,7 @@ export class BroadwayPlayer extends BaseCanvasBasedPlayer {
         if (!this.avc) {
             return;
         }
+
         this.avc.decode(data);
     }
 

@@ -36,6 +36,7 @@ export class DeviceTracker extends BaseDeviceTracker<GoogDeviceDescriptor, never
     private static instancesByUrl: Map<string, DeviceTracker> = new Map();
     protected static tools: Set<Tool> = new Set();
     protected tableId = 'goog_device_list';
+    protected CurrentlyStreamingDevices: string[] = [];
 
     public static start(hostItem: HostItem): DeviceTracker {
         const url = this.buildUrlForTracker(hostItem).toString();
@@ -106,7 +107,7 @@ export class DeviceTracker extends BaseDeviceTracker<GoogDeviceDescriptor, never
             if (!playerFullName || !playerCodeName) {
                 return;
             }
-            const link = DeviceTracker.buildLink(
+            const { link, rawLink } = DeviceTracker.buildLink(
                 {
                     action,
                     udid,
@@ -117,6 +118,19 @@ export class DeviceTracker extends BaseDeviceTracker<GoogDeviceDescriptor, never
                 this.params,
             );
             item.appendChild(link);
+
+            let iFrameElement = null;
+            if (!this.CurrentlyStreamingDevices.includes(udid) && decodeURIComponent(playerCodeName) === 'webcodecs') {
+                iFrameElement = document.createElement('iframe');
+                iFrameElement.setAttribute('id', `video-iframe-${udid}`);
+                iFrameElement.setAttribute('width', '500px');
+                iFrameElement.setAttribute('height', '200px');
+                iFrameElement.setAttribute('frameborder', '0');
+                iFrameElement.setAttribute('src', rawLink);
+                iFrameElement.className = 'videoScreen';
+                document.body.appendChild(iFrameElement);
+                this.CurrentlyStreamingDevices.push(udid);
+            }
         });
     }
 
@@ -187,11 +201,22 @@ export class DeviceTracker extends BaseDeviceTracker<GoogDeviceDescriptor, never
                 </div>
                 <div class="device-state" title="State: ${device.state}"></div>
             </div>
-            <div id="${servicesId}" class="services"></div>
+            <div id="${servicesId}" class="services" style="visibility:hidden;display:none;"></div>
         </div>`.content;
         const services = row.getElementById(servicesId);
         if (!services) {
             return;
+        }
+
+        if (!isActive) {
+            const removedIframe = document.getElementById(`video-iframe-${device.udid}`);
+            if (removedIframe) {
+                removedIframe.remove();
+            }
+            const idx = this.CurrentlyStreamingDevices.findIndex((ind) => ind === device.udid);
+            if (idx !== -1) {
+                this.CurrentlyStreamingDevices.splice(idx, 1);
+            }
         }
 
         DeviceTracker.tools.forEach((tool) => {

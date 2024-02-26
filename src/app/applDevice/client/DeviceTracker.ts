@@ -1,7 +1,7 @@
 import { BaseDeviceTracker } from '../../client/BaseDeviceTracker';
 import { ACTION } from '../../../common/Action';
 import ApplDeviceDescriptor from '../../../types/ApplDeviceDescriptor';
-import Util from '../../Util';
+// import Util from '../../Util';
 import { html } from '../../ui/HtmlTag';
 import { DeviceState } from '../../../common/DeviceState';
 import { HostItem } from '../../../types/Configuration';
@@ -38,10 +38,10 @@ export class DeviceTracker extends BaseDeviceTracker<ApplDeviceDescriptor, never
     }
 
     protected buildDeviceRow(tbody: Element, device: ApplDeviceDescriptor): void {
-        const blockClass = 'desc-block';
-        const fullName = `${this.id}_${Util.escapeUdid(device.udid)}`;
+        // const blockClass = 'desc-block';
+        // const fullName = `${this.id}_${Util.escapeUdid(device.udid)}`;
         const isActive = device.state === DeviceState.CONNECTED;
-        const servicesId = `device_services_${fullName}`;
+        // const servicesId = `device_services_${fullName}`;
         const row = html`<div class="device ${isActive ? 'active' : 'not-active'}">
             <div class="device-header">
                 <div class="device-name">"${device.name}"</div>
@@ -52,25 +52,25 @@ export class DeviceTracker extends BaseDeviceTracker<ApplDeviceDescriptor, never
                 </div>
                 <div class="device-state" title="State: ${device.state}"></div>
             </div>
-            <div id="${servicesId}" class="services"></div>
         </div>`.content;
-        const services = row.getElementById(servicesId);
-        if (!services) {
-            return;
-        }
+        // <div id="${servicesId}" class="services"></div>
+        // const services = row.getElementById(servicesId);
+        // if (!services) {
+        //     return;
+        // }
 
-        DeviceTracker.tools.forEach((tool) => {
-            const entry = tool.createEntryForDeviceList(device, blockClass, this.params);
-            if (entry) {
-                if (Array.isArray(entry)) {
-                    entry.forEach((item) => {
-                        item && services.appendChild(item);
-                    });
-                } else {
-                    services.appendChild(entry);
-                }
-            }
-        });
+        // DeviceTracker.tools.forEach((tool) => {
+        //     const entry = tool.createEntryForDeviceList(device, blockClass, this.params);
+        //     if (entry) {
+        //         if (Array.isArray(entry)) {
+        //             entry.forEach((item) => {
+        //                 item && services.appendChild(item);
+        //             });
+        //         } else {
+        //             services.appendChild(entry);
+        //         }
+        //     }
+        // });
         tbody.appendChild(row);
     }
 

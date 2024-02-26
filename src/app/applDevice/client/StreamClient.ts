@@ -75,7 +75,8 @@ export abstract class StreamClient<T extends ParamsStream> extends BaseClient<T,
                 player: playerCodeName,
                 udid: descriptor.udid,
             };
-            const link = DeviceTracker.buildLink(q, `Stream (${playerFullName})`, params);
+            const { link } = DeviceTracker.buildLink(q, `Stream (${playerFullName})`, params);
+
             playerTd.appendChild(link);
             entries.push(playerTd);
         });
@@ -178,6 +179,7 @@ export abstract class StreamClient<T extends ParamsStream> extends BaseClient<T,
         }
         if (this.deviceView) {
             const parent = this.deviceView.parentElement;
+
             if (parent) {
                 parent.removeChild(this.deviceView);
             }
